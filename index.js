@@ -1,43 +1,38 @@
 import express from 'express';
-import { movies } from './data/movies.js';
+import moviesRouter from './routes/movies.js';
+import directorsRouter from './routes/directors.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 app.set('etag', false);
-
+// Ruta raíz
 app.get('/', (req, res) => {
-  res.json({ message: 'Bienvenido a Movie Match API 🎬 - Bruno Diaz Cabanillas' });
+  res.json({
+    message: 'Bienvenido a Movie Match API 🎬',
+    endpoints: {
+      movies: {
+        all: 'GET /movies',
+        filterByGenre: 'GET /movies?genre=Sci-Fi',
+        filterCombined: 'GET /movies?genre=Sci-Fi&minRating=8',
+        byId: 'GET /movies/:id',
+        random: 'GET /movies/random'
+      },
+      directors: {
+        all: 'GET /directors',
+        filterByName: 'GET /directors?name=nolan',
+        filterByMinMovies: 'GET /directors?minMovies=2',
+        byName: 'GET /directors/:name',
+        random: 'GET /directors/random'
+      }
+    }
+  });
 });
 
-
-// Ruta de un servidor HTTP
-app.get('/causarellena', (req, res) => {
-    const papa = 'papa'
-    const aji = 'aji'
-    const cebolla = 'cebolla'
-    res.send(papa + '-' + aji + '-' + cebolla);
-})
-
-// NUEVO: Endpoint para listar películas
-app.get('/movies', (req, res) => {
-  res.json(movies);
-});
-
-app.get('/movies/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const movie = movies.find(m => m.id === id);
-
-  if (!movie) {
-    return res.status(404).json({
-      error: 'Película no encontrada',
-      id: id
-    });
-  }
-
-  res.json(movie);
-});
+// Montar routers
+app.use('/movies', moviesRouter);
+app.use('/directors', directorsRouter);
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🎬 Movie Match API corriendo en http://localhost:${PORT}`);
 });
