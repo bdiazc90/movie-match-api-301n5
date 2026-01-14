@@ -1,7 +1,11 @@
-import { Router } from 'express';
+import express from 'express';
 import { movies } from '../data/movies.js';
 
-const router = Router();
+import * as moviesController from '../controllers/moviesController.js'
+
+import { enrichMovie } from '../services/openrouter.js';
+
+const router = express.Router();
 
 // Helpers para respuestas consistentes
 const sendSuccess = (res, data) => {
@@ -43,8 +47,19 @@ router.get('/', (req, res) => {
 
 // GET /movies/random
 router.get('/random', (req, res) => {
-  const randomIndex = Math.floor(Math.random() * movies.length);
-  sendSuccess(res, movies[randomIndex]);
+  const randomMovie = moviesController.getRandomMovie();
+  sendSuccess(res, randomMovie);
+});
+
+
+
+// GET /movies/discover
+router.get('/discover', async (req, res) => {
+  const randomMovie = moviesController.getRandomMovie();
+  // enviar al servicio de OPENROUTER para enriquecer con anécdotas:
+  const enrichedMovie = await enrichMovie(randomMovie);
+
+  sendSuccess(res, enrichedMovie);
 });
 
 // GET /movies/:id
