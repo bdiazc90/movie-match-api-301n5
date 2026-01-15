@@ -1,12 +1,22 @@
+// ===== Importaciones siempre arriba
 import express from 'express';
 import moviesRouter from './routes/movies.js';
 import directorsRouter from './routes/directors.js';
-
 import dotenv from 'dotenv';
+import cors from 'cors';
+import { logger } from './middlewares/logger.js';
+
+// ===== Configuracion inicial
 dotenv.config();
 
+// ===== Iniciar aplicacion
 const app = express();
 const PORT = 3001;
+
+// ===== Cargar los MIDDLEWARES GLOBALES (ANTES de rutas) =====
+app.use(cors());           // Permite requests de otros dominios
+app.use(express.json());   // Parsea JSON en body de requests
+app.use(logger);      // Tu middleware de logging
 
 app.set('etag', false);
 // Ruta raíz
