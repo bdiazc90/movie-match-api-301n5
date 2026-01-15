@@ -5,6 +5,9 @@ import directorsRouter from './routes/directors.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { logger } from './middlewares/logger.js';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+
 
 // ===== Configuracion inicial
 dotenv.config();
@@ -45,6 +48,9 @@ app.get('/', (req, res) => {
 // Montar routers
 app.use('/movies', moviesRouter);
 app.use('/directors', directorsRouter);
+
+const swaggerDoc = YAML.load('./docs/swagger.yaml');
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.listen(PORT, () => {
   console.log(`🎬 Movie Match API corriendo en http://localhost:${PORT}`);
