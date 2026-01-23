@@ -1,10 +1,10 @@
 // ===== Importaciones siempre arriba
 import express from 'express';
-import moviesRouter from './routes/movies.js';
-import directorsRouter from './routes/directors.js';
+import moviesRouter from '#routes/movies.js';
+import directorsRouter from '#routes/directors.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { logger } from './middlewares/logger.js';
+import { logger } from '#middlewares/logger.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 

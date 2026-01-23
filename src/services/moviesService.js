@@ -1,0 +1,18 @@
+import prisma from "#lib/prisma.js";
+
+export async function getMovies() {
+    return await prisma.movie.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
+}
+
+export async function createMovie(data) {
+    return await prisma.movie.create({
+        data: {
+            title: data.title,
+            year: data.year,
+            rating: data.rating,
+            poster: data.poster || null
+        }
+    });
+}

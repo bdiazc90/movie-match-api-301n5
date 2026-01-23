@@ -29,6 +29,52 @@ paths:
                   count:
                     type: integer
   /movies:
+    post:
+      summary: Crear una nueva película
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - year
+                - genre
+                - director
+                - rating
+              properties:
+                title:
+                  type: string
+                  example: "Parasite"
+                year:
+                  type: integer
+                  example: 2019
+                genre:
+                  type: string
+                  example: "Thriller"
+                director:
+                  type: string
+                  example: "Bong Joon-ho"
+                rating:
+                  type: number
+                  example: 8.6
+      responses:
+        '201':
+          description: Película creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                  count:
+                    type: integer
+        '400':
+          description: Error de validación
     get:
       summary: Obtener todas las películas
       description: Retorna lista de películas con filtros opcionales
@@ -76,6 +122,94 @@ paths:
         '404':
           description: Película no encontrada
 
+  /movies/prisma:
+    get:
+      summary: Obtener películas desde base de datos (Prisma)
+      description: Retorna todas las películas almacenadas en PostgreSQL
+      tags:
+        - Prisma
+      responses:
+        '200':
+          description: Lista de películas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MoviePrisma'
+                  count:
+                    type: integer
+        '401':
+          description: No hay películas
+    post:
+      summary: Crear película en base de datos (Prisma)
+      description: Crea una nueva película en PostgreSQL
+      tags:
+        - Prisma
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - year
+                - rating
+              properties:
+                title:
+                  type: string
+                  example: "Inception"
+                  description: Título de la película (requerido)
+                year:
+                  type: integer
+                  example: 2010
+                  description: Año de estreno (1888 - actualidad)
+                rating:
+                  type: number
+                  example: 8.8
+                  description: Puntuación de 0 a 10
+                poster:
+                  type: string
+                  example: "https://example.com/poster.jpg"
+                  description: URL del póster (opcional)
+      responses:
+        '201':
+          description: Película creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MoviePrisma'
+                  count:
+                    type: integer
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Campos requeridos: title, year, rating"
+        '500':
+          description: Error del servidor
+
   /movies/discover:
     get:
       summary: Descubrir películas con IA
@@ -83,3 +217,31 @@ paths:
       responses:
         '200':
           description: Películas con contenido de IA
+
+components:
+  schemas:
+    MoviePrisma:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Inception"
+        year:
+          type: integer
+          example: 2010
+        rating:
+          type: number
+          example: 8.8
+        poster:
+          type: string
+          nullable: true
+          example: "https://example.com/poster.jpg"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

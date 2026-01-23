@@ -1,9 +1,7 @@
 import express from 'express';
-import { movies } from '../data/movies.js';
-
-import * as moviesController from '../controllers/moviesController.js'
-
-import { enrichMovie } from '../services/openrouter.js';
+import { movies } from '#data/movies.js';
+import * as moviesController from '#controllers/moviesController.js';
+import { enrichMovie } from '#services/openrouter.js';
 
 const router = express.Router();
 
@@ -16,6 +14,9 @@ const sendSuccess = (res, data) => {
 const sendError = (res, status, message) => {
   res.status(status).json({ success: false, error: message });
 };
+
+router.get('/prisma', moviesController.getAllMovies);
+router.post('/prisma', moviesController.createMovie);
 
 
 // GET /movies (con filtros)
@@ -44,6 +45,38 @@ router.get('/', (req, res) => {
 
   sendSuccess(res, result);
 });
+
+// POST /movies
+router.post('/', (req, res) => {
+  const { title, year, genre, director, rating } = req.body;
+
+  // Validación de campos requeridos
+  if (!title || !year || !genre || !director || rating === undefined) {
+    return sendError(res, 400, 'Campos requeridos: title, year, genre, director, rating');
+  }
+
+  // Validación de tipos
+  if (typeof title !== 'string' || typeof genre !== 'string' || typeof director !== 'string') {
+    return sendError(res, 400, 'title, genre y director deben ser strings');
+  }
+
+  if (typeof year !== 'number' || typeof rating !== 'number') {
+    return sendError(res, 400, 'year y rating deben ser números');
+  }
+
+  // Generar nuevo ID
+  const newId = Math.max(...movies.map(m => m.id)) + 1;
+
+  // Crear nueva película
+  const newMovie = { id: newId, title, year, genre, director, rating };
+
+  // Agregar al array
+  movies.push(newMovie);
+
+  // Responder con 201 Created
+  res.status(201);
+  sendSuccess(res, newMovie);
+})
 
 // GET /movies/random
 router.get('/random', (req, res) => {

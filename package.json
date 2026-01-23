@@ -6,12 +6,23 @@
   "author": "bdiazc90",
   "type": "module",
   "main": "index.js",
+  "imports": {
+    "#controllers/*": "./src/controllers/*",
+    "#routes/*": "./src/routes/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#services/*": "./src/services/*",
+    "#lib/*": "./src/lib/*",
+    "#data/*": "./data/*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx prisma generate",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "prisma": "^6.19.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
