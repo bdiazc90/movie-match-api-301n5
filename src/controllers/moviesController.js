@@ -1,5 +1,5 @@
 import { movies } from '#data/movies.js';
-
+import prisma from '#lib/prisma.js';
 import { getMovies, createMovie as createMovieService } from '#services/moviesService.js';
 
 const sendSuccess = (res, data) => {
@@ -23,7 +23,7 @@ export async function getAllMovies(req, res) {
 }
 
 export async function createMovie(req, res) {
-    const { title, year, rating, poster } = req.body;
+    const { title, year, rating, poster, genre } = req.body;
 
     // Validación de campos requeridos
     if (!title || year === undefined || rating === undefined) {
@@ -43,6 +43,12 @@ export async function createMovie(req, res) {
         return sendError(res, 400, 'rating debe ser un número entre 0 y 10');
     }
 
+    // Validar genero existente y match con algun enum Genre:
+    const validGenres = Object.keys(prisma.$enums.Genre);
+    if (!genre || typeof genre !== 'string' || !validGenres.includes(genre.toUpperCase())) {
+        return sendError(res, 400, `genre es requerido y debe ser uno de los siguientes: ${validGenres.join(', ')}`);
+    }
+
     if (poster !== undefined && typeof poster !== 'string') {
         return sendError(res, 400, 'poster debe ser un string (URL)');
     }
@@ -52,6 +58,7 @@ export async function createMovie(req, res) {
             title: title.trim(),
             year,
             rating,
+            genre,
             poster: poster?.trim() || null
         });
         res.status(201);

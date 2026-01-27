@@ -12,6 +12,7 @@ export async function createMovie(data) {
             title: data.title,
             year: data.year,
             rating: data.rating,
+            genre: data.genre,
             poster: data.poster || null
         }
     });
