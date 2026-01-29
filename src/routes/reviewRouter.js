@@ -5,4 +5,6 @@ const router = Router();
 
 router.get('/movies/:movieId/reviews', reviewController.getByMovie);
 
+router.post('/movies/:movieId/reviews', reviewController.create);
+
 export default router;

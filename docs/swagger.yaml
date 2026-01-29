@@ -253,6 +253,68 @@ paths:
         '500':
           description: Error del servidor
 
+    post:
+      summary: Crear una nueva review para una película
+      description: Crea una nueva review asociada a una película específica en PostgreSQL usando Prisma
+      tags:
+        - Reviews
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de la película
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - author
+                - content
+                - rating
+              properties:
+                author:
+                  type: string
+                  example: "John Doe"
+                  description: Nombre del autor de la reseña (requerido, no se permiten reseñas anónimas)
+                content:
+                  type: string
+                  example: "Una película increíble con un guion fascinante"
+                  description: Contenido de la reseña (requerido)
+                rating:
+                  type: integer
+                  example: 9
+                  description: Puntuación de la película (requerido)
+      responses:
+        '201':
+          description: Review creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '404':
+          description: Película no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                    example: "Película no encontrada"
+        '500':
+          description: Error del servidor
+
 components:
   schemas:
     Movie:
@@ -289,15 +351,15 @@ components:
         movieId:
           type: integer
           example: 1
-        reviewer:
+        author:
           type: string
           example: "John Doe"
-        comment: 
+        content:
           type: string
           example: "Great movie with mind-bending concepts!"
         rating:
-          type: number
-          example: 9.0
+          type: integer
+          example: 9
         createdAt:
           type: string
           format: date-time

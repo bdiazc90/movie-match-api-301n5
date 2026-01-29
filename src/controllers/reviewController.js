@@ -9,3 +9,16 @@ export async function getByMovie(req, res) {
     res.status(500).json({ success: false, error: error.message });
   }
 }
+
+export async function create(req, res) {
+  try {
+    const { movieId } = req.params;
+    const review = await reviewService.createReview(movieId, req.body);
+    res.status(201).json({ success: true, data: review });
+  } catch (error) {
+    if (error.message === 'Película no encontrada') {
+      return res.status(404).json({ success: false, error: error.message });
+    }
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
