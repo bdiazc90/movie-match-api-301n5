@@ -14,6 +14,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ventaja es la rápida implementación.
+// desventaja, es el mantenimiento, porque SOLO lo puede hacer el desarrollador.
 enum Genre {
   ACTION
   COMEDY
@@ -27,9 +29,28 @@ model Movie {
   id        Int      @id @default(autoincrement())
   title     String
   year      Int
-  genre     Genre
+  genre     Genre // <- Restricción a géneros predefinidos
   rating    Float
   poster    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  reviews   Review[] // <- Establece relación 1:N con Reviews
 }
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  movieId   Int
+  author    String // <- Nombre del autor de la reseña (es decir, NO se puede hacer resenãs anónimas)
+  content   String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Explicación de @relation:
+// - Una reseña si o si, debe estar asociada a una película.
+// - Si una película se elimina, sus reseñas asociadas también se eliminan (comportamiento en cascada por defecto).
+// - Una película puede tener, 0, 1 ó múltiples reseñas asociadas a ella.
+// - Si una reseña se elimina, la película asociada NO se elimina.

@@ -1,7 +1,8 @@
 // ===== Importaciones siempre arriba
 import express from 'express';
-import moviesRouter from '#routes/movies.js';
+import movieRouter from '#routes/movieRouter.js';
 import directorsRouter from '#routes/directors.js';
+import reviewRouter from '#routes/reviewRouter.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { logger } from '#middlewares/logger.js';
@@ -46,8 +47,9 @@ app.get('/', (req, res) => {
 });
 
 // Montar routers
-app.use('/movies', moviesRouter);
+app.use('/movies', movieRouter);
 app.use('/directors', directorsRouter);
+app.use(reviewRouter);
 
 const swaggerDoc = YAML.load('./docs/swagger.yaml');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));

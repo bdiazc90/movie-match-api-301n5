@@ -1,6 +1,6 @@
 import { movies } from '#data/movies.js';
 import prisma from '#lib/prisma.js';
-import { getMovies, createMovie as createMovieService } from '#services/moviesService.js';
+import { getMovies, getMovieById, createMovie as createMovieService } from '#services/movieService.js';
 
 const sendSuccess = (res, data) => {
   const arr = Array.isArray(data) ? data : [data]; // Siempre retornará un arreglo.
@@ -20,6 +20,15 @@ export async function getAllMovies(req, res) {
     const movies = await getMovies();
     if (movies.length < 1) return sendError(res, 401, "No hay películas");
     return sendSuccess(res, movies);
+}
+
+export async function getById(req, res) {
+    const id = parseInt(req.params.id);
+    const movie = await getMovieById(id);
+    if (!movie) {
+        return sendError(res, 404, `Película no encontrada (id: ${id})`);
+    }
+    return sendSuccess(res, movie);
 }
 
 export async function createMovie(req, res) {

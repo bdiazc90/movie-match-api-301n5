@@ -6,6 +6,13 @@ export async function getMovies() {
     });
 }
 
+export async function getMovieById(id) {
+    return await prisma.movie.findUnique({
+        where: { id: parseInt(id) },
+        include: { reviews: true }
+    });
+}
+
 export async function createMovie(data) {
     return await prisma.movie.create({
         data: {
