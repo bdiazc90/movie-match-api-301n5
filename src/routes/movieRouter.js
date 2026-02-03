@@ -28,6 +28,7 @@ router.get('/random', (req, res) => {
 });
 
 
+router.get('/search', movieController.search);
 
 // GET /movies/discover
 router.get('/discover', async (req, res) => {

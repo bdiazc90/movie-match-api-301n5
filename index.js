@@ -3,6 +3,7 @@ import express from 'express';
 import movieRouter from '#routes/movieRouter.js';
 import directorsRouter from '#routes/directors.js';
 import reviewRouter from '#routes/reviewRouter.js';
+import statsRouter from '#routes/statsRouter.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { logger } from '#middlewares/logger.js';
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 
 // Montar routers
 app.use('/movies', movieRouter);
+app.use('/stats', statsRouter);
 app.use('/directors', directorsRouter);
 app.use(reviewRouter);
 

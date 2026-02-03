@@ -1,15 +1,7 @@
 import { movies } from '#data/movies.js';
 import prisma from '#lib/prisma.js';
-import { getMovies, getMovieById, createMovie as createMovieService } from '#services/movieService.js';
-
-const sendSuccess = (res, data) => {
-  const arr = Array.isArray(data) ? data : [data]; // Siempre retornará un arreglo.
-  res.json({ success: true, data: arr, count: arr.length });
-};
-
-const sendError = (res, status, message) => {
-  res.status(status).json({ success: false, error: message });
-};
+import { getMovies, getMovieById, searchMovies, createMovie as createMovieService } from '#services/movieService.js';
+import { sendSuccess, sendError } from '#lib/response.js';
 
 export function getRandomMovie() {
     const randomIndex = Math.floor(Math.random() * movies.length);
@@ -75,4 +67,14 @@ export async function createMovie(req, res) {
     } catch (error) {
         return sendError(res, 500, 'Error al crear la película: ' + error.message);
     }
+}
+
+
+export async function search(req, res) {
+  try {
+    const result = await searchMovies(req.query);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 }
